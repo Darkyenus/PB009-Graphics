@@ -47,10 +47,15 @@ class MainScreen : ScreenAdapter() {
         present("Line Rasterization") {
             LineRasterization()
         }
+
+        present("Circle Rasterization") {
+            CircleRasterization()
+        }
     }
 
     override fun show() {
         Gdx.input.inputProcessor = stage
+        Gdx.gl.glEnable(GL20.GL_BLEND)
     }
 
     override fun render(delta: Float) {

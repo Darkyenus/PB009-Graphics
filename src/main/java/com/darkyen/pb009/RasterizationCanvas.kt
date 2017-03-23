@@ -253,6 +253,11 @@ abstract class RasterizationCanvas<in VariationType>(variations:Array<VariationT
         return color_TMP.set(r, g, b, 1f).toFloatBits()
     }
 
+    fun withAlpha(color:Float, newAlpha:Float):Float {
+        val bits = java.lang.Float.floatToRawIntBits(color) and (255 shl 24).inv() or (((newAlpha * 255).toInt() and 255) shl 24)
+        return java.lang.Float.intBitsToFloat(bits)
+    }
+
     fun newHandle(color: Color):Handle {
         val handle = HandleWidget(canvas, color)
         handle.x = 100f
