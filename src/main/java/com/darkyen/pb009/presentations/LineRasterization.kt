@@ -1,6 +1,7 @@
-package com.darkyen.pb009
+package com.darkyen.pb009.presentations
 
 import com.badlogic.gdx.graphics.Color
+import com.darkyen.pb009.RasterizationCanvas
 import java.lang.Math.abs
 
 /**
@@ -12,7 +13,7 @@ class LineRasterization : RasterizationCanvas<LineRasterization.LineAlgorithm>(L
     val firstHandle = newHandle(Color.RED)
     val secondHandle = newHandle(Color.GREEN)
 
-    override fun drawRaster(variation:LineAlgorithm) {
+    override fun drawRaster(variation: LineAlgorithm) {
         val x0 = firstHandle.canvasX()
         val y0 = firstHandle.canvasY()
         val x1 = secondHandle.canvasX()

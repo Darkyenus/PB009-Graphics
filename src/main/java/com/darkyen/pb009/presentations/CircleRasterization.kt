@@ -1,7 +1,8 @@
-package com.darkyen.pb009
+package com.darkyen.pb009.presentations
 
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.math.Vector2
+import com.darkyen.pb009.RasterizationCanvas
 import java.lang.Math.abs
 
 typealias Draw8 = (x:Int, y:Int, color:Float) -> Unit
@@ -21,7 +22,7 @@ class CircleRasterization : RasterizationCanvas<CircleRasterization.CircleType>(
         val radiusY = radiusHandle.canvasY()
         val radius = Math.round(Vector2.dst(centerX.toFloat(), centerY.toFloat(), radiusX.toFloat(), radiusY.toFloat()))
 
-        val draw8:Draw8 = { x:Int, y:Int, color:Float ->
+        val draw8: Draw8 = { x:Int, y:Int, color:Float ->
             val secondaryColor = withAlpha(color, 0.2f)
 
             pixel(centerX + x, centerY + y, color, step = false)

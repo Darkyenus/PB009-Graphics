@@ -10,6 +10,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.*
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.viewport.ScreenViewport
+import com.darkyen.pb009.presentations.CircleRasterization
+import com.darkyen.pb009.presentations.EllipseRasterization
+import com.darkyen.pb009.presentations.LineRasterization
 
 /**
  *
@@ -27,13 +30,14 @@ class MainScreen : ScreenAdapter() {
         stage.addActor(rootSplit)
 
         val selectorList = VerticalGroup()
+        selectorList.fill()
         val selectorScroll = ScrollPane(selectorList, Main.skin)
         rootSplit.add(selectorScroll).fillY().expandY()
 
         presentationContainer.fill()
         rootSplit.add(presentationContainer).fill().expand()
 
-        fun present(name:String, begin:() -> Actor) {
+        fun present(name:String, default:Boolean = false, begin:() -> Actor) {
             val button = TextButton(name, Main.skin)
             button.addListener(object:ClickListener() {
                 override fun clicked(event: InputEvent?, x: Float, y: Float) {
@@ -42,14 +46,22 @@ class MainScreen : ScreenAdapter() {
             })
             button.align(Align.left)
             selectorList.addActor(button)
+
+            if (default) {
+                presentationContainer.actor = begin()
+            }
         }
 
-        present("Line Rasterization") {
+        present("Line Rasterization", default = true) {
             LineRasterization()
         }
 
         present("Circle Rasterization") {
             CircleRasterization()
+        }
+
+        present("Ellipse Rasterization") {
+            EllipseRasterization()
         }
     }
 
