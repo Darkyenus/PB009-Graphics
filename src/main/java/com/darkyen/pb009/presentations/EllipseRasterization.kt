@@ -12,9 +12,9 @@ typealias Draw4 = (x:Int, y:Int, color:Float) -> Unit
  */
 class EllipseRasterization : RasterizationCanvas<Void?>(arrayOfNulls(1)) {
 
-    val centerHandle = newHandle(Color.RED)
-    val handle1 = newHandle(Color.GREEN)
-    val handle2 = newHandle(Color.BLUE)
+    val centerHandle = newHandle(0f, 0f, Color.RED, left = false, up = true)
+    val handle1 = newHandle(0f, 10f, Color.BLUE, left = true, up = true)
+    val handle2 = newHandle(10f, 0f, Color.GREEN, left = true, up = false)
 
     override fun drawRaster(variation: Void?) {
         val centerX = centerHandle.canvasX()

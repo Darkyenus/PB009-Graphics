@@ -10,8 +10,8 @@ import java.lang.Math.abs
 
 class LineRasterization : RasterizationCanvas<LineRasterization.LineAlgorithm>(LineAlgorithm.values()) {
 
-    val firstHandle = newHandle(Color.RED)
-    val secondHandle = newHandle(Color.GREEN)
+    val firstHandle = newHandle(-5f, -5f, Color.RED, left = false, up = true)
+    val secondHandle = newHandle(5f, 5f, Color.GREEN, left = true, up = false)
 
     override fun drawRaster(variation: LineAlgorithm) {
         val x0 = firstHandle.canvasX()

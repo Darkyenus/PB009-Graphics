@@ -12,8 +12,8 @@ typealias Draw8 = (x:Int, y:Int, color:Float) -> Unit
  */
 class CircleRasterization : RasterizationCanvas<CircleRasterization.CircleType>(CircleType.values()) {
 
-    val centerHandle = newHandle(Color.RED)
-    val radiusHandle = newHandle(Color.GREEN)
+    val centerHandle = newHandle(0f, 0f, Color.RED)
+    val radiusHandle = newHandle(10f, 10f, Color.GREEN, left = true, up = false)
 
     override fun drawRaster(variation: CircleType) {
         val centerX = centerHandle.canvasX()
