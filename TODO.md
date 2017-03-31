@@ -1,7 +1,4 @@
 # DU 1
-* Implementujte C-S algoritmus ořezávání úsečky v obdélníkovém okně s půlením
-intervalu. Doplňte výsledek o možnost krokování algoritmu a zvýraznění
-mezivýsledků.
 * Implementujte C-B algoritmus ořezávání úsečky v obecném okně. Doplňte výsledek o
 možnost krokování algoritmu a zvýraznění mezivýsledků.
 * Implementujte 1 blok S-H algoritmu pro proudové ořezávání uzavřeného

@@ -1,6 +1,7 @@
 package com.darkyen.pb009.presentations
 
 import com.badlogic.gdx.graphics.Color
+import com.darkyen.pb009.PointDirection
 import com.darkyen.pb009.RasterizationCanvas
 import java.lang.Math.abs
 
@@ -10,14 +11,14 @@ import java.lang.Math.abs
 
 class LineRasterization : RasterizationCanvas<LineRasterization.LineAlgorithm>(LineAlgorithm.values()) {
 
-    val firstHandle = newHandle(-5f, -5f, Color.RED, left = false, up = true)
-    val secondHandle = newHandle(5f, 5f, Color.GREEN, left = true, up = false)
+    val firstHandle = newHandle(-5f, -5f, Color.RED, PointDirection.PointUpRight)
+    val secondHandle = newHandle(5f, 5f, Color.GREEN, PointDirection.PointDownLeft)
 
     override fun drawRaster(variation: LineAlgorithm) {
-        val x0 = firstHandle.canvasX()
-        val y0 = firstHandle.canvasY()
-        val x1 = secondHandle.canvasX()
-        val y1 = secondHandle.canvasY()
+        val x0 = firstHandle.canvasPixelX()
+        val y0 = firstHandle.canvasPixelY()
+        val x1 = secondHandle.canvasPixelX()
+        val y1 = secondHandle.canvasPixelY()
 
         when (variation) {
             LineAlgorithm.Naive ->
@@ -40,6 +41,7 @@ class LineRasterization : RasterizationCanvas<LineRasterization.LineAlgorithm>(L
     fun naiveX(x1:Int, y1:Int, x2:Int, y2:Int) {
         val dy:Float = (y2 - y1).toFloat() / (x2 - x1)
         pixel(x1, y1, Color.GOLD)
+        step()
 
         val dx = x2 - x1
         val range = if (dx >= 0) 1..dx else dx..-1
@@ -47,12 +49,14 @@ class LineRasterization : RasterizationCanvas<LineRasterization.LineAlgorithm>(L
         for (x in range) {
             val y:Int = Math.round(dy * x)
             pixel(x1 + x, y1 + y, hsv((x - 1f) / (x2 - x1)))
+            step()
         }
     }
 
     fun naiveY(x1:Int, y1:Int, x2:Int, y2:Int) {
         val dx:Float = (x2 - x1).toFloat() / (y2 - y1)
         pixel(x1, y1, Color.WHITE)
+        step()
 
         val dy = y2 - y1
         val range = if (dy >= 0) 1..dy else dy..-1
@@ -60,6 +64,7 @@ class LineRasterization : RasterizationCanvas<LineRasterization.LineAlgorithm>(L
         for (y in range) {
             val x:Int = Math.round(dx * y)
             pixel(x1 + x, y1 + y, hsv((y - 1f) / (y2 - y1), saturation = 0.5f))
+            step()
         }
     }
 
@@ -90,6 +95,7 @@ class LineRasterization : RasterizationCanvas<LineRasterization.LineAlgorithm>(L
             val xi:Int = Math.round(x)
             val yi:Int = Math.round(y)
             pixel(xi, yi, rgb(abs(x posMod 1f), abs(y posMod 1f), 0.5f))
+            step()
 
             if (xi == xk && yi == yk) break
 
@@ -150,6 +156,7 @@ class LineRasterization : RasterizationCanvas<LineRasterization.LineAlgorithm>(L
             }
 
             pixel(x, y, hsv(((e.toFloat() / eMax) + 1f) / 2f, if (didCorrect) 1f else 0.6f))
+            step()
 
             e += eAcc
             if (x == x2 && y == y2) return

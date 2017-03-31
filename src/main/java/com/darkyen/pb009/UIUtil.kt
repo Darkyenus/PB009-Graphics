@@ -14,3 +14,10 @@ fun imageButton(image:String): Button {
     val pressed = Main.skin.newDrawable(image, Color(0.5f, 0.5f, 0.5f, 1f))
     return ImageButton(base, over, pressed)
 }
+
+enum class PointDirection(val left:Boolean, val up:Boolean) {
+    PointUpLeft(true, true),
+    PointDownLeft(true, false),
+    PointUpRight(false, true),
+    PointDownRight(false, false)
+}

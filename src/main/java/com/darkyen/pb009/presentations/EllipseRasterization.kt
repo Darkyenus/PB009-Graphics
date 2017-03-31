@@ -2,27 +2,26 @@ package com.darkyen.pb009.presentations
 
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.math.MathUtils
+import com.darkyen.pb009.PointDirection
 import com.darkyen.pb009.RasterizationCanvas
 import java.lang.Math.abs
-
-typealias Draw4 = (x:Int, y:Int, color:Float) -> Unit
 
 /**
  *
  */
 class EllipseRasterization : RasterizationCanvas<Void?>(arrayOfNulls(1)) {
 
-    val centerHandle = newHandle(0f, 0f, Color.RED, left = false, up = true)
-    val handle1 = newHandle(0f, 10f, Color.BLUE, left = true, up = true)
-    val handle2 = newHandle(10f, 0f, Color.GREEN, left = true, up = false)
+    val centerHandle = newHandle(0f, 0f, Color.RED, PointDirection.PointUpRight)
+    val handle1 = newHandle(0f, 10f, Color.BLUE, PointDirection.PointUpLeft)
+    val handle2 = newHandle(10f, 0f, Color.GREEN, PointDirection.PointDownLeft)
 
     override fun drawRaster(variation: Void?) {
-        val centerX = centerHandle.canvasX()
-        val centerY = centerHandle.canvasY()
-        val x1 = handle1.canvasX() - centerX
-        val y1 = handle1.canvasY() - centerY
-        val x2 = handle2.canvasX() - centerX
-        val y2 = handle2.canvasY() - centerY
+        val centerX = centerHandle.canvasPixelX()
+        val centerY = centerHandle.canvasPixelY()
+        val x1 = handle1.canvasPixelX() - centerX
+        val y1 = handle1.canvasPixelY() - centerY
+        val x2 = handle2.canvasPixelX() - centerX
+        val y2 = handle2.canvasPixelY() - centerY
 
         var wrongDefinition = false
 
@@ -54,11 +53,11 @@ class EllipseRasterization : RasterizationCanvas<Void?>(arrayOfNulls(1)) {
             val color:Float = if (wrongDefinition) Color.RED.toFloatBits() else requestedColor
             val secondaryColor = withAlpha(color, 0.2f)
 
-            pixel(centerX + x, centerY + y, color, step = false)
-            pixel(centerX + x, centerY - y, secondaryColor, step = false)
+            pixel(centerX + x, centerY + y, color)
+            pixel(centerX + x, centerY - y, secondaryColor)
 
-            pixel(centerX - x, centerY + y, secondaryColor, step = false)
-            pixel(centerX - x, centerY - y, secondaryColor, step = false)
+            pixel(centerX - x, centerY + y, secondaryColor)
+            pixel(centerX - x, centerY - y, secondaryColor)
 
             step()
         }

@@ -13,6 +13,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport
 import com.darkyen.pb009.presentations.CircleRasterization
 import com.darkyen.pb009.presentations.EllipseRasterization
 import com.darkyen.pb009.presentations.LineRasterization
+import com.darkyen.pb009.presentations.RectangleSegmentCutting
 
 /**
  *
@@ -62,6 +63,10 @@ class MainScreen : ScreenAdapter() {
 
         present("Ellipse Rasterization") {
             EllipseRasterization()
+        }
+
+        present("Rectangle Segment Cutting") {
+            RectangleSegmentCutting()
         }
     }
 

@@ -2,10 +2,9 @@ package com.darkyen.pb009.presentations
 
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.math.Vector2
+import com.darkyen.pb009.PointDirection
 import com.darkyen.pb009.RasterizationCanvas
 import java.lang.Math.abs
-
-typealias Draw8 = (x:Int, y:Int, color:Float) -> Unit
 
 /**
  *
@@ -13,29 +12,29 @@ typealias Draw8 = (x:Int, y:Int, color:Float) -> Unit
 class CircleRasterization : RasterizationCanvas<CircleRasterization.CircleType>(CircleType.values()) {
 
     val centerHandle = newHandle(0f, 0f, Color.RED)
-    val radiusHandle = newHandle(10f, 10f, Color.GREEN, left = true, up = false)
+    val radiusHandle = newHandle(10f, 10f, Color.GREEN, PointDirection.PointDownLeft)
 
     override fun drawRaster(variation: CircleType) {
-        val centerX = centerHandle.canvasX()
-        val centerY = centerHandle.canvasY()
-        val radiusX = radiusHandle.canvasX()
-        val radiusY = radiusHandle.canvasY()
+        val centerX = centerHandle.canvasPixelX()
+        val centerY = centerHandle.canvasPixelY()
+        val radiusX = radiusHandle.canvasPixelX()
+        val radiusY = radiusHandle.canvasPixelY()
         val radius = Math.round(Vector2.dst(centerX.toFloat(), centerY.toFloat(), radiusX.toFloat(), radiusY.toFloat()))
 
         val draw8: Draw8 = { x:Int, y:Int, color:Float ->
             val secondaryColor = withAlpha(color, 0.2f)
 
-            pixel(centerX + x, centerY + y, color, step = false)
-            pixel(centerX + x, centerY - y, secondaryColor, step = false)
+            pixel(centerX + x, centerY + y, color)
+            pixel(centerX + x, centerY - y, secondaryColor)
 
-            pixel(centerX - x, centerY + y, secondaryColor, step = false)
-            pixel(centerX - x, centerY - y, secondaryColor, step = false)
+            pixel(centerX - x, centerY + y, secondaryColor)
+            pixel(centerX - x, centerY - y, secondaryColor)
 
-            pixel(centerX + y, centerY + x, secondaryColor, step = false)
-            pixel(centerX + y, centerY - x, secondaryColor, step = false)
+            pixel(centerX + y, centerY + x, secondaryColor)
+            pixel(centerX + y, centerY - x, secondaryColor)
 
-            pixel(centerX - y, centerY + x, secondaryColor, step = false)
-            pixel(centerX - y, centerY - x, secondaryColor, step = false)
+            pixel(centerX - y, centerY + x, secondaryColor)
+            pixel(centerX - y, centerY - x, secondaryColor)
 
             step()
         }

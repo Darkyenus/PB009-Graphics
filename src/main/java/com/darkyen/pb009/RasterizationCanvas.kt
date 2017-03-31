@@ -133,10 +133,10 @@ abstract class RasterizationCanvas<in VariationType>(variations:Array<VariationT
             }
 
             if (steps.size == 0) {
-                canvas.pixels = 0
+                canvas.drawElementCount = 0
                 animationSlider.value = 1f
             }else {
-                canvas.pixels = steps[field]
+                canvas.drawElementCount = steps[field]
                 animationSlider.value = field.toFloat()
             }
         }
@@ -172,10 +172,8 @@ abstract class RasterizationCanvas<in VariationType>(variations:Array<VariationT
 
             val previousAnimationStep = animationStep
 
-            canvas.pixelsX.clear()
-            canvas.pixelsY.clear()
-            canvas.pixelsColor.clear()
-            canvas.pixels = 0
+            canvas.drawElements.clear()
+            canvas.drawElementCount = 0
             steps.clear()
 
             drawRaster(currentVariation)
@@ -197,25 +195,24 @@ abstract class RasterizationCanvas<in VariationType>(variations:Array<VariationT
 
     abstract fun drawRaster(variation:VariationType)
 
-    fun pixel(x:Int, y:Int, color:Color, step:Boolean = true) {
-        pixel(x, y, color.toFloatBits(), step)
+    fun pixel(x:Int, y:Int, color:Color) {
+        pixel(x, y, color.toFloatBits())
     }
 
-    fun pixel(x:Int, y:Int, color:Float, step:Boolean = true) {
-        canvas.pixelsX.add(x)
-        canvas.pixelsY.add(y)
-        canvas.pixelsColor.add(color)
-        if (step) {
-            step()
-        }
+    fun pixel(x:Int, y:Int, color:Float) {
+        canvas.drawElements.add(DrawElement.Pixel(x, y, color))
+    }
+
+    fun line(x1:Float, y1:Float, x2:Float, y2:Float, w1: Float = 1f, w2: Float = w1, color: Float) {
+        canvas.drawElements.add(DrawElement.Line(x1, y1, x2, y2, w1, w2, color))
     }
 
     fun step() {
-        steps.add(canvas.pixelsX.size)
+        steps.add(canvas.drawElements.size)
     }
 
-    fun newHandle(x:Float, y:Float, color: Color, left:Boolean = true, up:Boolean = true):Handle {
-        val handle = RasterCanvas.VirtualHandle(x, y, color, left, up)
+    fun newHandle(x:Float, y:Float, color: Color, direction: PointDirection = PointDirection.PointUpLeft):Handle {
+        val handle = RasterCanvas.VirtualHandle(x, y, color, direction.left, direction.up)
         canvas.handles.add(handle)
         dirty = true
         return handle
@@ -226,10 +223,8 @@ abstract class RasterizationCanvas<in VariationType>(variations:Array<VariationT
         var viewY:Float = 0f
         var pixelSize:Float = 10f
 
-        val pixelsX = IntsArray()
-        val pixelsY = IntsArray()
-        val pixelsColor = FloatsArray()
-        var pixels = 0
+        val drawElements = ObjectsArray<DrawElement>()
+        var drawElementCount = 0
 
         private val widgetAreaBounds = Rectangle()
         private val scissorBounds = Rectangle()
@@ -327,9 +322,8 @@ abstract class RasterizationCanvas<in VariationType>(variations:Array<VariationT
         }
 
         fun drawCanvas(batch: Batch) {
-            val pixelsX = pixelsX
-            val pixelsY = pixelsY
-            val pixelsColor = pixelsColor
+            val white = white
+            val drawElements = drawElements
 
             val viewX = viewX
             val viewY = viewY
@@ -337,13 +331,29 @@ abstract class RasterizationCanvas<in VariationType>(variations:Array<VariationT
             val halfWidth = width/2
             val halfHeight = height/2
 
-            for (i in 0..(pixels - 1)) {
-                val pX = pixelsX[i]
-                val pY = pixelsY[i]
-                val pColor = pixelsColor[i]
+            fun tX(x:Float):Float {
+                return (x - viewX) * pixelSize + halfWidth
+            }
 
-                batch.setColor(pColor)
-                batch.draw(white, (pX - viewX) * pixelSize + halfWidth, (pY - viewY) * pixelSize + halfHeight, pixelSize, pixelSize)
+            fun tY(y:Float):Float {
+                return (y - viewY) * pixelSize + halfHeight
+            }
+
+            for (i in 0..(drawElementCount - 1)) {
+                val element = drawElements[i]
+
+                when (element) {
+                    is DrawElement.Pixel -> {
+                        val (pX, pY, color) = element
+                        batch.setColor(color)
+                        batch.draw(white, tX(pX.toFloat()), tY(pY.toFloat()), pixelSize, pixelSize)
+                    }
+                    is DrawElement.Line -> {
+                        val (x1, y1, x2, y2, w1, w2, color) = element
+                        val vertices = createLineVertices(tX(x1), tY(y1), tX(x2), tY(y2), white, color, (w1/10f)*pixelSize, (w2/10f)*pixelSize)
+                        batch.draw(white.texture, vertices, 0, vertices.size)
+                    }
+                }
             }
 
             val mouse = Vector2(Gdx.input.x.toFloat(), Gdx.input.y.toFloat())
@@ -365,10 +375,14 @@ abstract class RasterizationCanvas<in VariationType>(variations:Array<VariationT
             batch.color = Color.WHITE
         }
 
-        class VirtualHandle(x:Float, y:Float, val color:Color, val left:Boolean, val up:Boolean) : Handle {
-            override fun canvasX(): Int = round(handleX)
+        class VirtualHandle(x:Float, y:Float, override var color:Color, val left:Boolean, val up:Boolean) : Handle {
+            override fun canvasPixelX(): Int = round(handleX)
 
-            override fun canvasY(): Int = round(handleY)
+            override fun canvasPixelY(): Int = round(handleY)
+
+            override fun canvasX(): Float = handleX + 0.5f
+
+            override fun canvasY(): Float = handleY + 0.5f
 
             var handleX:Float = x
             var handleY:Float = y
@@ -427,12 +441,21 @@ abstract class RasterizationCanvas<in VariationType>(variations:Array<VariationT
     }
 
     interface Handle {
-        fun canvasX():Int
-        fun canvasY():Int
+        fun canvasPixelX():Int
+        fun canvasPixelY():Int
+        fun canvasX():Float
+        fun canvasY():Float
+
+        var color:Color
     }
 
     companion object {
         val white:TextureRegion = Main.skin.getRegion("white")
         val handleImage: TextureRegion = Main.skin.getRegion("pixel-pin")
+    }
+
+    sealed class DrawElement {
+        data class Pixel(val x:Int, val y:Int, val color:Float) : DrawElement()
+        data class Line(val x1:Float, val y1:Float, val x2:Float, val y2:Float, val w1:Float, val w2:Float, val color:Float) : DrawElement()
     }
 }
