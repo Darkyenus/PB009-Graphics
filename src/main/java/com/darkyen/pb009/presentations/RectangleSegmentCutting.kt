@@ -12,7 +12,7 @@ import kotlin.experimental.or
 /**
  * Implements the Cohen-Sutherland segment cutting algorithm with halving edge-point resolution
  */
-class RectangleSegmentCutting : RasterizationCanvas<Void?>(arrayOfNulls(1)) {
+class RectangleSegmentCutting : RasterizationCanvas<RectangleSegmentCutting.RectangleSegmentCullingVariants>(RectangleSegmentCullingVariants.values()) {
 
     companion object {
         val XMax:Byte = 1
@@ -46,7 +46,7 @@ class RectangleSegmentCutting : RasterizationCanvas<Void?>(arrayOfNulls(1)) {
     fun bitMask(window:Rectangle, handle: Handle):Byte {
         val x = handle.canvasX()
         val y = handle.canvasY()
-        val color = Color.BLACK.cpy()
+        val color = Color(0f, 0.7f, 0f, 1f)
 
         var result:Byte = 0
 
@@ -74,7 +74,7 @@ class RectangleSegmentCutting : RasterizationCanvas<Void?>(arrayOfNulls(1)) {
         return result
     }
 
-    override fun drawRaster(variation: Void?) {
+    override fun drawRaster(variation: RectangleSegmentCullingVariants) {
         val clipRect = Rectangle(window1.canvasX(), window1.canvasY(), 0f, 0f)
         clipRect.merge(window2.canvasX(), window2.canvasY())
 
@@ -104,6 +104,7 @@ class RectangleSegmentCutting : RasterizationCanvas<Void?>(arrayOfNulls(1)) {
 
 
         fun drawMid(x:Float, y:Float, color:Float) {
+            if (variation == RectangleSegmentCullingVariants.Without_Midpoints) return
             val overhang = Vector2(segment1.canvasX(), segment1.canvasY()).sub(segment2.canvasX(), segment2.canvasY()).nor().rotate90(1).scl(2f)
             line(x+overhang.x, y+overhang.y, x, y, w1 = 1.5f, w2 = 0.2f, color = color)
             line(x-overhang.x, y-overhang.y, x, y, w1 = 1.5f, w2 = 0.2f, color = color)
@@ -168,5 +169,10 @@ class RectangleSegmentCutting : RasterizationCanvas<Void?>(arrayOfNulls(1)) {
             line(pc.x, pc.y, qc.x, qc.y, w1 = 2f, w2 = 1f, color = Color.LIME.toFloatBits())
             step()
         }
+    }
+
+    enum class RectangleSegmentCullingVariants {
+        With_Midpoints,
+        Without_Midpoints
     }
 }

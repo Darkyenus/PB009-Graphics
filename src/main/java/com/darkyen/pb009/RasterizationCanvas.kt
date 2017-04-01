@@ -86,7 +86,11 @@ abstract class RasterizationCanvas<in VariationType>(variations:Array<VariationT
         })
 
         if (variations.size > 1) {
-            val variationSelection = SelectBox<VariationType>(Main.skin)
+            val variationSelection:SelectBox<VariationType> = object:SelectBox<VariationType>(Main.skin) {
+                override fun toString(obj: VariationType): String {
+                    return obj.toString().replace('_', ' ')
+                }
+            }
             variationSelection.setItems(*variations)
             variationSelection.selectedIndex = 0
 
