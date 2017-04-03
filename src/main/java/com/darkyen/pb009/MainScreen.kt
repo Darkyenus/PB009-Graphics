@@ -62,12 +62,16 @@ class MainScreen : ScreenAdapter() {
             EllipseRasterization()
         }
 
-        present("Rectangle Segment Cutting (ACS)") {
+        present("Rectangle Segment Cutting (C-S)") {
             RectangleSegmentCutting()
         }
 
-        present("Polygon Segment Cutting (ACB)") {
+        present("Polygon Segment Cutting (C-B)") {
             PolygonSegmentCutting()
+        }
+
+        present("Polygon Clipping (S-H)") {
+            PolygonClipping()
         }
     }
 

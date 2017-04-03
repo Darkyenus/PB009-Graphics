@@ -9,12 +9,12 @@ import java.lang.Math.abs
 /**
  *
  */
-class CircleRasterization : RasterizationCanvas<CircleRasterization.CircleType>(CircleType.values()) {
+class CircleRasterization : RasterizationCanvas<CircleRasterization.Variant>(Variant.values()) {
 
     val centerHandle = newHandle(0f, 0f, Color.RED)
     val radiusHandle = newHandle(10f, 10f, Color.GREEN, PointDirection.PointDownLeft)
 
-    override fun drawRaster(variation: CircleType) {
+    override fun drawRaster(variation: Variant) {
         val centerX = centerHandle.canvasPixelX()
         val centerY = centerHandle.canvasPixelY()
         val radiusX = radiusHandle.canvasPixelX()
@@ -40,9 +40,9 @@ class CircleRasterization : RasterizationCanvas<CircleRasterization.CircleType>(
         }
 
         when (variation) {
-            CircleType.Naive -> naive(radius, draw8)
-            CircleType.Decision_Member -> decisionMember(radius, draw8)
-            CircleType.Bresenham -> bresenham(radius, draw8)
+            Variant.Naive -> naive(radius, draw8)
+            Variant.Decision_Member -> decisionMember(radius, draw8)
+            Variant.Bresenham -> bresenham(radius, draw8)
         }
     }
 
@@ -95,7 +95,7 @@ class CircleRasterization : RasterizationCanvas<CircleRasterization.CircleType>(
     }
 
 
-    enum class CircleType {
+    enum class Variant {
         Naive,
         Decision_Member,
         Bresenham

@@ -12,7 +12,7 @@ import kotlin.experimental.or
 /**
  * Implements the Cohen-Sutherland segment cutting algorithm with halving edge-point resolution
  */
-class RectangleSegmentCutting : RasterizationCanvas<RectangleSegmentCutting.RectangleSegmentCuttingVariants>(RectangleSegmentCuttingVariants.values()) {
+class RectangleSegmentCutting : RasterizationCanvas<RectangleSegmentCutting.Variant>(Variant.values()) {
 
     companion object {
         val XMax:Byte = 1
@@ -21,8 +21,8 @@ class RectangleSegmentCutting : RasterizationCanvas<RectangleSegmentCutting.Rect
         val YMin:Byte = 8
     }
 
-    val window1 = newHandle(-10f, 10f, Color.BROWN, PointDirection.PointDownRight)
-    val window2 = newHandle(10f, -10f, Color.BROWN, PointDirection.PointUpLeft)
+    val frameTL = newHandle(-10f, 10f, Color.BROWN, PointDirection.PointDownRight)
+    val frameBR = newHandle(10f, -10f, Color.BROWN, PointDirection.PointUpLeft)
 
     val segment1 = newHandle(0f, 0f, Color.WHITE, PointDirection.PointUpRight)
     val segment2 = newHandle(15f, 0f, Color.WHITE, PointDirection.PointDownLeft)
@@ -74,9 +74,9 @@ class RectangleSegmentCutting : RasterizationCanvas<RectangleSegmentCutting.Rect
         return result
     }
 
-    override fun drawRaster(variation: RectangleSegmentCuttingVariants) {
-        val clipRect = Rectangle(window1.canvasX(), window1.canvasY(), 0f, 0f)
-        clipRect.merge(window2.canvasX(), window2.canvasY())
+    override fun drawRaster(variation: Variant) {
+        val clipRect = Rectangle(frameTL.canvasX(), frameTL.canvasY(), 0f, 0f)
+        clipRect.merge(frameBR.canvasX(), frameBR.canvasY())
 
         line(clipRect.x, clipRect.y, clipRect.x + clipRect.width, clipRect.y, color = Color.BROWN.toFloatBits())
         line(clipRect.x + clipRect.width, clipRect.y, clipRect.x + clipRect.width, clipRect.y + clipRect.height, color = Color.BROWN.toFloatBits())
@@ -104,7 +104,7 @@ class RectangleSegmentCutting : RasterizationCanvas<RectangleSegmentCutting.Rect
 
 
         fun drawMid(x:Float, y:Float, color:Float) {
-            if (variation == RectangleSegmentCuttingVariants.Without_Midpoints) return
+            if (variation == Variant.Without_Midpoints) return
             val overhang = Vector2(segment1.canvasX(), segment1.canvasY()).sub(segment2.canvasX(), segment2.canvasY()).nor().rotate90(1).scl(2f)
             line(x+overhang.x, y+overhang.y, x, y, w1 = 1.5f, w2 = 0.2f, color = color)
             line(x-overhang.x, y-overhang.y, x, y, w1 = 1.5f, w2 = 0.2f, color = color)
@@ -171,7 +171,7 @@ class RectangleSegmentCutting : RasterizationCanvas<RectangleSegmentCutting.Rect
         }
     }
 
-    enum class RectangleSegmentCuttingVariants {
+    enum class Variant {
         With_Midpoints,
         Without_Midpoints
     }

@@ -9,23 +9,23 @@ import java.lang.Math.abs
  *
  */
 
-class LineRasterization : RasterizationCanvas<LineRasterization.LineAlgorithm>(LineAlgorithm.values()) {
+class LineRasterization : RasterizationCanvas<LineRasterization.Variant>(Variant.values()) {
 
     val firstHandle = newHandle(-5f, -5f, Color.RED, PointDirection.PointUpRight)
     val secondHandle = newHandle(5f, 5f, Color.GREEN, PointDirection.PointDownLeft)
 
-    override fun drawRaster(variation: LineAlgorithm) {
+    override fun drawRaster(variation: Variant) {
         val x0 = firstHandle.canvasPixelX()
         val y0 = firstHandle.canvasPixelY()
         val x1 = secondHandle.canvasPixelX()
         val y1 = secondHandle.canvasPixelY()
 
         when (variation) {
-            LineAlgorithm.Naive ->
+            Variant.Naive ->
                     naive(x0, y0, x1, y1)
-            LineAlgorithm.DDA ->
+            Variant.DDA ->
                     dda(x0, y0, x1, y1)
-            LineAlgorithm.Bresenham ->
+            Variant.Bresenham ->
                     bresenham(x0, y0, x1, y1)
         }
     }
@@ -165,7 +165,7 @@ class LineRasterization : RasterizationCanvas<LineRasterization.LineAlgorithm>(L
         }
     }
 
-    enum class LineAlgorithm {
+    enum class Variant {
         Bresenham,
         DDA,
         Naive;

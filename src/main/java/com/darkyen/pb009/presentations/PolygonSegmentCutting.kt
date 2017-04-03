@@ -9,7 +9,7 @@ import com.darkyen.pb009.RasterizationCanvas
 /**
  *
  */
-class PolygonSegmentCutting : RasterizationCanvas<PolygonSegmentCutting.PolygonSegmentCuttingVariants>(PolygonSegmentCuttingVariants.values()) {
+class PolygonSegmentCutting : RasterizationCanvas<PolygonSegmentCutting.Variant>(Variant.values()) {
 
     val frameTL = newHandle(-5f, 5f, Color.FIREBRICK, PointDirection.PointDownRight)
     val frameTR = newHandle(5f, 5f, Color.FIREBRICK, PointDirection.PointDownLeft)
@@ -19,7 +19,7 @@ class PolygonSegmentCutting : RasterizationCanvas<PolygonSegmentCutting.PolygonS
     val segment1 = newHandle(-5f, 10f, Color.FOREST, PointDirection.PointDownRight)
     val segment2 = newHandle(5f, -10f, Color.FOREST, PointDirection.PointUpLeft)
 
-    override fun drawRaster(variation: PolygonSegmentCuttingVariants) {
+    override fun drawRaster(variation: Variant) {
         val lines = arrayOf(
                 Line(frameTL, frameTR),
                 Line(frameTR, frameBR),
@@ -29,7 +29,7 @@ class PolygonSegmentCutting : RasterizationCanvas<PolygonSegmentCutting.PolygonS
         // Frame
         for (line in lines) {
             line(line.x1, line.y1, line.x2, line.y2, color = Color.FIREBRICK.toFloatBits())
-            if (variation == PolygonSegmentCuttingVariants.With_Midpoints) {
+            if (variation == Variant.With_Midpoints) {
                 val centerX = (line.x1 + line.x2) / 2f
                 val centerY = (line.y1 + line.y2) / 2f
                 line(centerX, centerY, centerX + line.normal.x, centerY + line.normal.y, 1.2f, 0.2f, Color.SKY.toFloatBits())
@@ -68,7 +68,7 @@ class PolygonSegmentCutting : RasterizationCanvas<PolygonSegmentCutting.PolygonS
                     tMax = minOf(tMax, t0)
                 }
 
-                if (variation == PolygonSegmentCuttingVariants.With_Midpoints) {
+                if (variation == Variant.With_Midpoints) {
                     // Debug draw
                     val t0X = MathUtils.lerp(segment1.canvasX(), segment2.canvasX(), t0)
                     val t0Y = MathUtils.lerp(segment1.canvasY(), segment2.canvasY(), t0)
@@ -89,7 +89,7 @@ class PolygonSegmentCutting : RasterizationCanvas<PolygonSegmentCutting.PolygonS
             step()
         } else {
             // Rejected
-            if (variation == PolygonSegmentCuttingVariants.With_Midpoints) {
+            if (variation == Variant.With_Midpoints) {
                 line(tMinX, tMinY, tMaxX, tMaxY, color = Color.RED.toFloatBits())
                 step()
             }
@@ -106,7 +106,7 @@ class PolygonSegmentCutting : RasterizationCanvas<PolygonSegmentCutting.PolygonS
         val normal:Vector2 = Vector2(x1, y1).sub(x2, y2).rotate90(-1).nor()
     }
 
-    enum class PolygonSegmentCuttingVariants {
+    enum class Variant {
         With_Midpoints,
         Without_Midpoints
     }

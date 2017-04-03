@@ -1,8 +1,4 @@
 # DU 1
-* Implementujte 1 blok S-H algoritmu pro proudové ořezávání uzavřeného
-polygonálního tahu pro zvolenou hranici xmax a interaktivně zadané body polygonu.
-Doplňte výsledek o možnost krokování algoritmu a zvýraznění mezivýsledků.
-
 * Realizujte řádkové semínkové vyplňování oblasti ohraničené obecným neprotínajícím
 se polygonálním tahem (interaktivní zadání). Pomocí zpoždění nebo krokováním
 zobrazte postup vyplňování.
