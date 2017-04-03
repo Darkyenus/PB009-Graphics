@@ -1,13 +1,12 @@
 # DU 1
-* Implementujte C-B algoritmus ořezávání úsečky v obecném okně. Doplňte výsledek o
-možnost krokování algoritmu a zvýraznění mezivýsledků.
-
 * Implementujte 1 blok S-H algoritmu pro proudové ořezávání uzavřeného
 polygonálního tahu pro zvolenou hranici xmax a interaktivně zadané body polygonu.
 Doplňte výsledek o možnost krokování algoritmu a zvýraznění mezivýsledků.
+
 * Realizujte řádkové semínkové vyplňování oblasti ohraničené obecným neprotínajícím
 se polygonálním tahem (interaktivní zadání). Pomocí zpoždění nebo krokováním
 zobrazte postup vyplňování.
+
 * Implementujte Pinedův algoritmus vyplňování interaktivně zadaného trojúhelníku.
 Pomocí zpoždění nebo krokováním zobrazte postup vyplňování.
 
@@ -15,6 +14,7 @@ Pomocí zpoždění nebo krokováním zobrazte postup vyplňování.
 * Vytvořte jednoduché těleso složené z trojúhelníků (kostka, jehlan, ...). Definujte
 bodový světelný zdroj v konečné vzdálenosti od tělesa. Vykreslete těleso a jeho kopie
 s různě zvolenými parametry materiálu a různými pozicemi světla.
+
 * Objemovou reprezentaci, která aproximuje těleso pomocí voxelů, lze jednoduše
 vykreslit pro tělesa, jejichž povrch je dán implicitní funkcí F(x,y,z)=0. Zvolte voxelový prostor, např.
 50x50x50 a vykreslete hraniční a vnitřní voxely, které aproximují zvolené těleso

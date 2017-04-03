@@ -12,7 +12,7 @@ import kotlin.experimental.or
 /**
  * Implements the Cohen-Sutherland segment cutting algorithm with halving edge-point resolution
  */
-class RectangleSegmentCutting : RasterizationCanvas<RectangleSegmentCutting.RectangleSegmentCullingVariants>(RectangleSegmentCullingVariants.values()) {
+class RectangleSegmentCutting : RasterizationCanvas<RectangleSegmentCutting.RectangleSegmentCuttingVariants>(RectangleSegmentCuttingVariants.values()) {
 
     companion object {
         val XMax:Byte = 1
@@ -74,7 +74,7 @@ class RectangleSegmentCutting : RasterizationCanvas<RectangleSegmentCutting.Rect
         return result
     }
 
-    override fun drawRaster(variation: RectangleSegmentCullingVariants) {
+    override fun drawRaster(variation: RectangleSegmentCuttingVariants) {
         val clipRect = Rectangle(window1.canvasX(), window1.canvasY(), 0f, 0f)
         clipRect.merge(window2.canvasX(), window2.canvasY())
 
@@ -104,7 +104,7 @@ class RectangleSegmentCutting : RasterizationCanvas<RectangleSegmentCutting.Rect
 
 
         fun drawMid(x:Float, y:Float, color:Float) {
-            if (variation == RectangleSegmentCullingVariants.Without_Midpoints) return
+            if (variation == RectangleSegmentCuttingVariants.Without_Midpoints) return
             val overhang = Vector2(segment1.canvasX(), segment1.canvasY()).sub(segment2.canvasX(), segment2.canvasY()).nor().rotate90(1).scl(2f)
             line(x+overhang.x, y+overhang.y, x, y, w1 = 1.5f, w2 = 0.2f, color = color)
             line(x-overhang.x, y-overhang.y, x, y, w1 = 1.5f, w2 = 0.2f, color = color)
@@ -171,7 +171,7 @@ class RectangleSegmentCutting : RasterizationCanvas<RectangleSegmentCutting.Rect
         }
     }
 
-    enum class RectangleSegmentCullingVariants {
+    enum class RectangleSegmentCuttingVariants {
         With_Midpoints,
         Without_Midpoints
     }

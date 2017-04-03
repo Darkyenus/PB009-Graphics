@@ -10,10 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.viewport.ScreenViewport
-import com.darkyen.pb009.presentations.CircleRasterization
-import com.darkyen.pb009.presentations.EllipseRasterization
-import com.darkyen.pb009.presentations.LineRasterization
-import com.darkyen.pb009.presentations.RectangleSegmentCutting
+import com.darkyen.pb009.presentations.*
 
 /**
  *
@@ -65,8 +62,12 @@ class MainScreen : ScreenAdapter() {
             EllipseRasterization()
         }
 
-        present("Rectangle Segment Cutting") {
+        present("Rectangle Segment Cutting (ACS)") {
             RectangleSegmentCutting()
+        }
+
+        present("Polygon Segment Cutting (ACB)") {
+            PolygonSegmentCutting()
         }
     }
 
