@@ -14,13 +14,13 @@ class LineRasterization : RasterizationCanvas<LineRasterization.Variant>(Variant
     val firstHandle = newHandle(-5f, -5f, Color.RED, PointDirection.PointUpRight)
     val secondHandle = newHandle(5f, 5f, Color.GREEN, PointDirection.PointDownLeft)
 
-    override fun drawRaster(variation: Variant) {
-        val x0 = firstHandle.canvasPixelX()
-        val y0 = firstHandle.canvasPixelY()
-        val x1 = secondHandle.canvasPixelX()
-        val y1 = secondHandle.canvasPixelY()
+    override fun drawRaster(variant: Variant) {
+        val x0 = firstHandle.pixelX()
+        val y0 = firstHandle.pixelY()
+        val x1 = secondHandle.pixelX()
+        val y1 = secondHandle.pixelY()
 
-        when (variation) {
+        when (variant) {
             Variant.Naive ->
                     naive(x0, y0, x1, y1)
             Variant.DDA ->

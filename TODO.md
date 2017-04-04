@@ -1,8 +1,4 @@
 # DU 1
-* Realizujte řádkové semínkové vyplňování oblasti ohraničené obecným neprotínajícím
-se polygonálním tahem (interaktivní zadání). Pomocí zpoždění nebo krokováním
-zobrazte postup vyplňování.
-
 * Implementujte Pinedův algoritmus vyplňování interaktivně zadaného trojúhelníku.
 Pomocí zpoždění nebo krokováním zobrazte postup vyplňování.
 

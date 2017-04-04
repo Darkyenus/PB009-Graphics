@@ -15,13 +15,13 @@ class EllipseRasterization : RasterizationCanvas<Void?>(arrayOfNulls(1)) {
     val handle1 = newHandle(0f, 10f, Color.BLUE, PointDirection.PointUpLeft)
     val handle2 = newHandle(10f, 0f, Color.GREEN, PointDirection.PointDownLeft)
 
-    override fun drawRaster(variation: Void?) {
-        val centerX = centerHandle.canvasPixelX()
-        val centerY = centerHandle.canvasPixelY()
-        val x1 = handle1.canvasPixelX() - centerX
-        val y1 = handle1.canvasPixelY() - centerY
-        val x2 = handle2.canvasPixelX() - centerX
-        val y2 = handle2.canvasPixelY() - centerY
+    override fun drawRaster(variant: Void?) {
+        val centerX = centerHandle.pixelX()
+        val centerY = centerHandle.pixelY()
+        val x1 = handle1.pixelX() - centerX
+        val y1 = handle1.pixelY() - centerY
+        val x2 = handle2.pixelX() - centerX
+        val y2 = handle2.pixelY() - centerY
 
         var wrongDefinition = false
 

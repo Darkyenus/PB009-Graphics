@@ -63,7 +63,7 @@ private val color_TMP = Color()
  *
  * https://en.wikipedia.org/wiki/HSL_and_HSV#From_HSV
  */
-fun hsv(hue:Float, saturation:Float = 1f, value:Float = 1f):Float {
+fun hsv(hue:Float, saturation:Float = 1f, value:Float = 1f, alpha:Float = 1f):Float {
     val c = value * saturation
     val h = (if (hue < 0) (hue % 1 + 1) else (hue % 1)) * 6
     val x = c * (1 - Math.abs(h % 2 - 1))
@@ -98,7 +98,7 @@ fun hsv(hue:Float, saturation:Float = 1f, value:Float = 1f):Float {
         b = x
     }
 
-    return color_TMP.set(r, g, b, 1f).toFloatBits()
+    return color_TMP.set(r, g, b, alpha).toFloatBits()
 }
 
 fun rgb(r:Float, g:Float, b:Float):Float {

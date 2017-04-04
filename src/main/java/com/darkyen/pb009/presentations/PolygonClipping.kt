@@ -24,7 +24,7 @@ class PolygonClipping : RasterizationCanvas<PolygonClipping.Variant>(Variant.val
     }
 
 
-    override fun drawRaster(variation: Variant) {
+    override fun drawRaster(variant: Variant) {
         val clipRect = Rectangle(frameTL.canvasX(), frameTL.canvasY(), 0f, 0f)
         clipRect.merge(frameBR.canvasX(), frameBR.canvasY())
 
@@ -41,7 +41,7 @@ class PolygonClipping : RasterizationCanvas<PolygonClipping.Variant>(Variant.val
         drawPolygon(polygon, Color.LIGHT_GRAY.cpy().apply { a = 0.3f }.toFloatBits())
         step()
 
-        when (variation) {
+        when (variant) {
             Variant.XMax -> {
                 val newPolygon = clip(clipRect.x + clipRect.width, polygon)
                 drawPolygon(newPolygon, Color.CHARTREUSE.toFloatBits())

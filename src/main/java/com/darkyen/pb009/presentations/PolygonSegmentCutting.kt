@@ -19,7 +19,7 @@ class PolygonSegmentCutting : RasterizationCanvas<PolygonSegmentCutting.Variant>
     val segment1 = newHandle(-5f, 10f, Color.FOREST, PointDirection.PointDownRight)
     val segment2 = newHandle(5f, -10f, Color.FOREST, PointDirection.PointUpLeft)
 
-    override fun drawRaster(variation: Variant) {
+    override fun drawRaster(variant: Variant) {
         val lines = arrayOf(
                 Line(frameTL, frameTR),
                 Line(frameTR, frameBR),
@@ -29,7 +29,7 @@ class PolygonSegmentCutting : RasterizationCanvas<PolygonSegmentCutting.Variant>
         // Frame
         for (line in lines) {
             line(line.x1, line.y1, line.x2, line.y2, color = Color.FIREBRICK.toFloatBits())
-            if (variation == Variant.With_Midpoints) {
+            if (variant == Variant.With_Midpoints) {
                 val centerX = (line.x1 + line.x2) / 2f
                 val centerY = (line.y1 + line.y2) / 2f
                 line(centerX, centerY, centerX + line.normal.x, centerY + line.normal.y, 1.2f, 0.2f, Color.SKY.toFloatBits())
@@ -68,13 +68,14 @@ class PolygonSegmentCutting : RasterizationCanvas<PolygonSegmentCutting.Variant>
                     tMax = minOf(tMax, t0)
                 }
 
-                if (variation == Variant.With_Midpoints) {
+                if (variant == Variant.With_Midpoints) {
                     // Debug draw
                     val t0X = MathUtils.lerp(segment1.canvasX(), segment2.canvasX(), t0)
                     val t0Y = MathUtils.lerp(segment1.canvasY(), segment2.canvasY(), t0)
                     val t0N = BA.cpy().nor().rotate90(1)
 
                     line(t0X - t0N.x, t0Y - t0N.y, t0X + t0N.x, t0Y + t0N.y, color = Color.GRAY.toFloatBits())
+                    step()
                 }
             }
         }
@@ -89,7 +90,7 @@ class PolygonSegmentCutting : RasterizationCanvas<PolygonSegmentCutting.Variant>
             step()
         } else {
             // Rejected
-            if (variation == Variant.With_Midpoints) {
+            if (variant == Variant.With_Midpoints) {
                 line(tMinX, tMinY, tMaxX, tMaxY, color = Color.RED.toFloatBits())
                 step()
             }

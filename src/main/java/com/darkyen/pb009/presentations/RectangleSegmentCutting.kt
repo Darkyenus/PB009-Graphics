@@ -74,7 +74,7 @@ class RectangleSegmentCutting : RasterizationCanvas<RectangleSegmentCutting.Vari
         return result
     }
 
-    override fun drawRaster(variation: Variant) {
+    override fun drawRaster(variant: Variant) {
         val clipRect = Rectangle(frameTL.canvasX(), frameTL.canvasY(), 0f, 0f)
         clipRect.merge(frameBR.canvasX(), frameBR.canvasY())
 
@@ -104,7 +104,7 @@ class RectangleSegmentCutting : RasterizationCanvas<RectangleSegmentCutting.Vari
 
 
         fun drawMid(x:Float, y:Float, color:Float) {
-            if (variation == Variant.Without_Midpoints) return
+            if (variant == Variant.Without_Midpoints) return
             val overhang = Vector2(segment1.canvasX(), segment1.canvasY()).sub(segment2.canvasX(), segment2.canvasY()).nor().rotate90(1).scl(2f)
             line(x+overhang.x, y+overhang.y, x, y, w1 = 1.5f, w2 = 0.2f, color = color)
             line(x-overhang.x, y-overhang.y, x, y, w1 = 1.5f, w2 = 0.2f, color = color)

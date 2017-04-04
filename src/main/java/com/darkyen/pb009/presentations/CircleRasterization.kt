@@ -14,11 +14,11 @@ class CircleRasterization : RasterizationCanvas<CircleRasterization.Variant>(Var
     val centerHandle = newHandle(0f, 0f, Color.RED)
     val radiusHandle = newHandle(10f, 10f, Color.GREEN, PointDirection.PointDownLeft)
 
-    override fun drawRaster(variation: Variant) {
-        val centerX = centerHandle.canvasPixelX()
-        val centerY = centerHandle.canvasPixelY()
-        val radiusX = radiusHandle.canvasPixelX()
-        val radiusY = radiusHandle.canvasPixelY()
+    override fun drawRaster(variant: Variant) {
+        val centerX = centerHandle.pixelX()
+        val centerY = centerHandle.pixelY()
+        val radiusX = radiusHandle.pixelX()
+        val radiusY = radiusHandle.pixelY()
         val radius = Math.round(Vector2.dst(centerX.toFloat(), centerY.toFloat(), radiusX.toFloat(), radiusY.toFloat()))
 
         val draw8: Draw8 = { x:Int, y:Int, color:Float ->
@@ -39,7 +39,7 @@ class CircleRasterization : RasterizationCanvas<CircleRasterization.Variant>(Var
             step()
         }
 
-        when (variation) {
+        when (variant) {
             Variant.Naive -> naive(radius, draw8)
             Variant.Decision_Member -> decisionMember(radius, draw8)
             Variant.Bresenham -> bresenham(radius, draw8)

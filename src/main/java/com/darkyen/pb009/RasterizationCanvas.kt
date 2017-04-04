@@ -33,9 +33,9 @@ abstract class RasterizationCanvas<in VariationType>(variations:Array<VariationT
     private val animationSlider = Slider(0f, 0f, 1f, false, Main.skin)
     private var animationSlider_ignoreChangeEvent = false
     private var animating = false
-    private val animationStepDuration = 0.10f
+    private fun animationStepDuration():Float = (Math.log10(steps.size+1.0)+1.0).toFloat() / steps.size
 
-    private var animationNextStepTimeout = animationStepDuration
+    private var animationNextStepTimeout = animationStepDuration()
 
     private var currentVariation:VariationType = variations[0]
 
@@ -52,7 +52,7 @@ abstract class RasterizationCanvas<in VariationType>(variations:Array<VariationT
 
         fun setAnimating(animating:Boolean) {
             this.animating = animating
-            animationNextStepTimeout = animationStepDuration
+            animationNextStepTimeout = animationStepDuration()
         }
 
         animationSlider.addListener(object : ChangeListener() {
@@ -73,14 +73,18 @@ abstract class RasterizationCanvas<in VariationType>(variations:Array<VariationT
         stopButton.addListener(object : ClickListener() {
             override fun clicked(event: InputEvent?, x: Float, y: Float) {
                 setAnimating(false)
-                animationStep = 0
+                animationStep = -1
                 stopButton.isChecked = false
             }
         })
         oneStepButton.addListener(object : ClickListener() {
             override fun clicked(event: InputEvent?, x: Float, y: Float) {
                 setAnimating(false)
-                animationStep += 1
+                if (animationStep + 1 == steps.size) {
+                    animationStep = 0
+                } else {
+                    animationStep += 1
+                }
                 oneStepButton.isChecked = false
             }
         })
@@ -153,7 +157,7 @@ abstract class RasterizationCanvas<in VariationType>(variations:Array<VariationT
 
             animationNextStepTimeout -= delta
             while (animationNextStepTimeout < 0) {
-                animationNextStepTimeout += animationStepDuration
+                animationNextStepTimeout += animationStepDuration()
                 if (animationStep == steps.size - 1) {
                     animationStep = 0
                 } else {
@@ -197,7 +201,7 @@ abstract class RasterizationCanvas<in VariationType>(variations:Array<VariationT
         super.invalidate()
     }
 
-    abstract fun drawRaster(variation:VariationType)
+    abstract fun drawRaster(variant:VariationType)
 
     fun pixel(x:Int, y:Int, color:Color) {
         pixel(x, y, color.toFloatBits())
@@ -380,9 +384,9 @@ abstract class RasterizationCanvas<in VariationType>(variations:Array<VariationT
         }
 
         class VirtualHandle(x:Float, y:Float, override var color:Color, val left:Boolean, val up:Boolean) : Handle {
-            override fun canvasPixelX(): Int = round(handleX)
+            override fun pixelX(): Int = round(handleX)
 
-            override fun canvasPixelY(): Int = round(handleY)
+            override fun pixelY(): Int = round(handleY)
 
             override fun canvasX(): Float = handleX + 0.5f
 
@@ -445,8 +449,8 @@ abstract class RasterizationCanvas<in VariationType>(variations:Array<VariationT
     }
 
     interface Handle {
-        fun canvasPixelX():Int
-        fun canvasPixelY():Int
+        fun pixelX():Int
+        fun pixelY():Int
         fun canvasX():Float
         fun canvasY():Float
 

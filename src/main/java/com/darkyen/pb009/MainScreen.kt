@@ -73,6 +73,10 @@ class MainScreen : ScreenAdapter() {
         present("Polygon Clipping (S-H)") {
             PolygonClipping()
         }
+
+        present("Flood Fill") {
+            FloodFill()
+        }
     }
 
     override fun show() {
