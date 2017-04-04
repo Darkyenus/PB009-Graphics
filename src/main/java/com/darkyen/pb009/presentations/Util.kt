@@ -98,7 +98,9 @@ fun hsv(hue:Float, saturation:Float = 1f, value:Float = 1f, alpha:Float = 1f):Fl
         b = x
     }
 
-    return color_TMP.set(r, g, b, alpha).toFloatBits()
+    val m = value - c
+
+    return color_TMP.set(r + m, g + m, b + m, alpha).toFloatBits()
 }
 
 fun rgb(r:Float, g:Float, b:Float):Float {

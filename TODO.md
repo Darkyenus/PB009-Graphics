@@ -1,7 +1,3 @@
-# DU 1
-* Implementujte Pinedův algoritmus vyplňování interaktivně zadaného trojúhelníku.
-Pomocí zpoždění nebo krokováním zobrazte postup vyplňování.
-
 # DU 2
 * Vytvořte jednoduché těleso složené z trojúhelníků (kostka, jehlan, ...). Definujte
 bodový světelný zdroj v konečné vzdálenosti od tělesa. Vykreslete těleso a jeho kopie

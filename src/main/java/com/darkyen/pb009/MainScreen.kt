@@ -77,6 +77,10 @@ class MainScreen : ScreenAdapter() {
         present("Flood Fill") {
             FloodFill()
         }
+
+        present("Triangle Fill") {
+            TriangleFill()
+        }
     }
 
     override fun show() {
