@@ -1,4 +1,5 @@
-import darkyenus.resourcepacker.{LWJGLLauncher, PackingOperation}
+
+import com.darkyen.resourcepacker.PackingOperation
 
 import scala.collection.mutable.ArrayBuffer
 
@@ -42,17 +43,17 @@ javacOptions ++= Seq("-g", "-Xlint", "-Xlint:-rawtypes", "-Xlint:-unchecked")
 javaOptions ++= Seq("-ea")
 
 TaskKey[Unit]("packResources") := {
-  LWJGLLauncher.launch(new PackingOperation(file("./resources"), file("./assets")))
+  ResourcePacker.resourcePack(new PackingOperation("./resources", "./assets"))
 }
 
 mainClass in assembly := Some("com.darkyen.backyardrockets.BackyardRocketsMain")
 
 TaskKey[Unit]("dist") := {
   val resultZip = target.value / (name.value+"-"+version.value+".zip")
-  val basePrefix = "Everycia/"
+  val basePrefix = "PB009/"
 //
   val files = new ArrayBuffer[(File, String)]()
-  files += ((assembly.value, basePrefix + "BackyardRockets.jar"))
+  files += ((assembly.value, basePrefix + "PB009.jar"))
 //
   def appendContent(directory:File, prefix:String): Unit ={
     for(file <- directory.listFiles() if !file.getName.startsWith(".")) {

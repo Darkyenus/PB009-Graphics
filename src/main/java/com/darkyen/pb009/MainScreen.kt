@@ -50,6 +50,10 @@ class MainScreen : ScreenAdapter() {
             }
         }
 
+        selectorList.addActor(Label("2D", Main.skin).apply {
+            setAlignment(Align.center)
+        })
+
         present("Line Rasterization", default = true) {
             LineRasterization()
         }
@@ -78,9 +82,18 @@ class MainScreen : ScreenAdapter() {
             FloodFill()
         }
 
-        present("Triangle Fill") {
+        present("Triangle Fill (Pineda)") {
             TriangleFill()
         }
+        /*
+        selectorList.addActor(Label("3D", Main.skin).apply {
+            setAlignment(Align.center)
+        })
+
+        present("Material Laboratory") {
+            MaterialLaboratory()
+        }
+        */
     }
 
     override fun show() {
