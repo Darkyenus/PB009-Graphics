@@ -40,15 +40,25 @@ libraryDependencies ++= Seq(
 
 javacOptions ++= Seq("-g", "-Xlint", "-Xlint:-rawtypes", "-Xlint:-unchecked")
 
-javaOptions ++= Seq("-ea")
+javaOptions ++= (if (System.getProperty("os.name").contains("Mac")) Seq("-ea", "-XstartOnFirstThread") else Seq("-ea"))
 
-TaskKey[Unit]("packResources") := {
+val packResources = taskKey[Unit]("Packs application's resources")
+
+packResources := {
   ResourcePacker.resourcePack(new PackingOperation("./resources", "./assets"))
 }
 
-mainClass in assembly := Some("com.darkyen.backyardrockets.BackyardRocketsMain")
+val MainClass = "com.darkyen.pb009.MainKt"
+
+mainClass in assembly := Some(MainClass)
+
+mainClass in (Compile, run) := Some(MainClass)
+
+mainClass := Some(MainClass)
 
 TaskKey[Unit]("dist") := {
+  packResources.value
+  //
   val resultZip = target.value / (name.value+"-"+version.value+".zip")
   val basePrefix = "PB009/"
 //
@@ -70,4 +80,3 @@ TaskKey[Unit]("dist") := {
   IO.zip(files, resultZip)
   println("Packed to "+resultZip.getCanonicalPath)
 }
-
