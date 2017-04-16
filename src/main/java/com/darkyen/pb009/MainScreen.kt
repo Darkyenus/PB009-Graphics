@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.*
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.badlogic.gdx.utils.Align
+import com.badlogic.gdx.utils.Disposable
 import com.badlogic.gdx.utils.viewport.ScreenViewport
 import com.darkyen.pb009.presentations.*
 
@@ -39,6 +40,10 @@ class MainScreen : ScreenAdapter() {
             val button = TextButton(name, Main.skin)
             button.addListener(object:ClickListener() {
                 override fun clicked(event: InputEvent?, x: Float, y: Float) {
+                    val old = presentationContainer.actor
+                    if (old is Disposable) {
+                        old.dispose()
+                    }
                     presentationContainer.actor = begin()
                 }
             })
@@ -85,7 +90,7 @@ class MainScreen : ScreenAdapter() {
         present("Triangle Fill (Pineda)") {
             TriangleFill()
         }
-        /*
+
         selectorList.addActor(Label("3D", Main.skin).apply {
             setAlignment(Align.center)
         })
@@ -93,7 +98,6 @@ class MainScreen : ScreenAdapter() {
         present("Material Laboratory") {
             MaterialLaboratory()
         }
-        */
     }
 
     override fun show() {

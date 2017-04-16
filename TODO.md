@@ -7,7 +7,7 @@ s různě zvolenými parametry materiálu a různými pozicemi světla.
 vykreslit pro tělesa, jejichž povrch je dán implicitní funkcí F(x,y,z)=0. Zvolte voxelový prostor, např.
 50x50x50 a vykreslete hraniční a vnitřní voxely, které aproximují zvolené těleso
 (koule, válec, implicitní plocha f(x,y,z)= 0, toroid apod.). Voxely vykreslete jako
-neprůhledné kostičky. Zvolená projekce umožní pohled z různých stran. • bude doplněno, studentské náměty vítány
+neprůhledné kostičky. Zvolená projekce umožní pohled z různých stran.
 
 
 # Bonus

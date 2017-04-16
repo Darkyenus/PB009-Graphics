@@ -3,7 +3,6 @@ package com.darkyen.pb009
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.InputMultiplexer
 import com.badlogic.gdx.graphics.Color
-import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.Pixmap
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.glutils.FrameBuffer
@@ -14,14 +13,14 @@ import com.badlogic.gdx.scenes.scene2d.ui.SelectBox
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.scenes.scene2d.ui.Widget
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener
-import com.badlogic.gdx.utils.viewport.Viewport
+import com.badlogic.gdx.utils.Disposable
 import com.darkyen.pb009.presentations.ceil
 
 /**
  *
  */
 @Suppress("LeakingThis")
-abstract class SceneCanvas(val viewport:Viewport) : Table(Main.skin) {
+abstract class SceneCanvas : Table(Main.skin), Disposable {
 
     private val canvas = FrameBufferCanvas(this)
     private val optionsTable = Table(Main.skin)
@@ -32,11 +31,11 @@ abstract class SceneCanvas(val viewport:Viewport) : Table(Main.skin) {
     var mouseY:Int = 0
         private set
 
-    val screenWidth:Int
-        get() = canvas.framebuffer?.width ?: 1
+    var screenWidth:Int = 1
+        private set
 
-    val screenHeight:Int
-        get() = canvas.framebuffer?.height ?: 1
+    var screenHeight:Int = 1
+        private set
 
     init {
         add(canvas).grow().row()
@@ -68,8 +67,6 @@ abstract class SceneCanvas(val viewport:Viewport) : Table(Main.skin) {
 
         return { selectBox.selected }
     }
-
-    abstract fun prepareCamera()
 
     abstract fun render()
 
@@ -122,22 +119,27 @@ abstract class SceneCanvas(val viewport:Viewport) : Table(Main.skin) {
 
         override fun draw(batch: Batch, parentAlpha: Float) {
             validate()
+            stage.keyboardFocus = this
+            stage.scrollFocus = this
 
             val width = ceil(width)
             val height = ceil(height)
 
+            val density = Gdx.graphics.backBufferWidth / Gdx.graphics.width
+
             var framebuffer:FrameBuffer? = framebuffer
             if (framebuffer == null) {
-                framebuffer = FrameBuffer(Pixmap.Format.RGBA8888, width, height, true, false)
+                framebuffer = FrameBuffer(Pixmap.Format.RGBA8888, width * density, height * density, true, false)
                 this.framebuffer = framebuffer
+                parent.screenWidth = width
+                parent.screenHeight = height
             }
 
-            parent.viewport.update(width, height)
-            parent.prepareCamera()
+            batch.end()
             framebuffer.begin()
-            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT or GL20.GL_DEPTH_BUFFER_BIT)
             parent.render()
             framebuffer.end()
+            batch.begin()
 
             batch.color = Color.WHITE
 
@@ -150,5 +152,9 @@ abstract class SceneCanvas(val viewport:Viewport) : Table(Main.skin) {
             framebuffer?.dispose()
             framebuffer = null
         }
+    }
+
+    override fun dispose() {
+        canvas.framebuffer?.dispose()
     }
 }
