@@ -2,8 +2,7 @@ package com.darkyen.pb009
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.InputMultiplexer
-import com.badlogic.gdx.graphics.Color
-import com.badlogic.gdx.graphics.Pixmap
+import com.badlogic.gdx.graphics.*
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.glutils.FrameBuffer
 import com.badlogic.gdx.scenes.scene2d.Actor
@@ -15,12 +14,13 @@ import com.badlogic.gdx.scenes.scene2d.ui.Widget
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener
 import com.badlogic.gdx.utils.Disposable
 import com.darkyen.pb009.presentations.ceil
+import org.lwjgl.system.MathUtil
 
 /**
  *
  */
 @Suppress("LeakingThis")
-abstract class SceneCanvas : Table(Main.skin), Disposable {
+abstract class ShaderCanvas : Table(Main.skin), Disposable {
 
     private val canvas = FrameBufferCanvas(this)
     private val optionsTable = Table(Main.skin)
@@ -37,18 +37,39 @@ abstract class SceneCanvas : Table(Main.skin), Disposable {
     var screenHeight:Int = 1
         private set
 
+    var factor:Float = 1f
+
+    val screenMesh = Mesh(Mesh.VertexDataType.VertexBufferObject, true, 4, 4, VertexAttribute(VertexAttributes.Usage.Position, 2, "in_position"))
+
     init {
+        screenMesh.setIndices(shortArrayOf(
+                0, 1, 2, 3
+        ))
+        screenMesh.setVertices(floatArrayOf(
+                -1f, 1f,
+                1f, 1f,
+                1f, -1f,
+                -1f, -1f
+        ))
+
         add(canvas).grow().row()
         isTransform = false
 
         optionsTable.defaults().pad(10f)
         optionsTable.background = Main.skin.newDrawable("white", Color.GRAY)
+
+        add(optionsTable).growX().row()
+
+        newSelectBox(*FBFactor.values(), initiallySelected = FBFactor.SUB2.ordinal) {newFactor ->
+            factor = newFactor.factor
+            canvas.sizeChanged()
+        }
     }
 
-    fun <SelectItem>newSelectBox(vararg items:SelectItem, changed:((SelectItem) -> Unit)? = null):() -> SelectItem {
+    fun <SelectItem>newSelectBox(vararg items:SelectItem, initiallySelected:Int = 0, changed:((SelectItem) -> Unit)? = null):() -> SelectItem {
         val selectBox = SelectBox<SelectItem>(Main.skin)
-        selectBox.items.addAll(*items)
-        selectBox.selected = items[0]
+        selectBox.setItems(*items)
+        selectBox.selectedIndex = initiallySelected
         if (changed != null) {
             selectBox.addListener(object : ChangeListener() {
                 var selectedBefore = selectBox.selected
@@ -61,6 +82,7 @@ abstract class SceneCanvas : Table(Main.skin), Disposable {
                     }
                 }
             })
+            changed(selectBox.selected)
         }
 
         optionsTable.add(selectBox)
@@ -70,7 +92,7 @@ abstract class SceneCanvas : Table(Main.skin), Disposable {
 
     abstract fun render()
 
-    private class FrameBufferCanvas(val parent:SceneCanvas) : Widget() {
+    private class FrameBufferCanvas(val parent: ShaderCanvas) : Widget() {
         var framebuffer:FrameBuffer? = null
 
         init {
@@ -117,6 +139,11 @@ abstract class SceneCanvas : Table(Main.skin), Disposable {
             })
         }
 
+        var framebufferDrawnWidth = 1
+        var framebufferDrawnHeight = 1
+        var framebufferDrawnU = 1f
+        var framebufferDrawnV = 1f
+
         override fun draw(batch: Batch, parentAlpha: Float) {
             validate()
             stage.keyboardFocus = this
@@ -125,18 +152,29 @@ abstract class SceneCanvas : Table(Main.skin), Disposable {
             val width = ceil(width)
             val height = ceil(height)
 
-            val density = Gdx.graphics.backBufferWidth / Gdx.graphics.width
+            val density = (Gdx.graphics.backBufferWidth / Gdx.graphics.width) * parent.factor
 
             var framebuffer:FrameBuffer? = framebuffer
             if (framebuffer == null) {
-                framebuffer = FrameBuffer(Pixmap.Format.RGBA8888, width * density, height * density, true, false)
+                val drawnWidth = maxOf((width * density).toInt(), 1)
+                val drawnHeight = maxOf((height * density).toInt(), 1)
+                val fbWidth = MathUtil.mathRoundPoT(drawnWidth)
+                val fbHeight = MathUtil.mathRoundPoT(drawnHeight)
+
+                framebuffer = FrameBuffer(Pixmap.Format.RGBA8888, fbWidth, fbHeight, true, false)
                 this.framebuffer = framebuffer
                 parent.screenWidth = width
                 parent.screenHeight = height
+
+                framebufferDrawnWidth = drawnWidth
+                framebufferDrawnHeight = drawnHeight
+                framebufferDrawnU = drawnWidth.toFloat() / fbWidth.toFloat()
+                framebufferDrawnV = drawnHeight.toFloat() / fbHeight.toFloat()
             }
 
             batch.end()
-            framebuffer.begin()
+            framebuffer.bind()
+            Gdx.gl20.glViewport(0, 0, framebufferDrawnWidth, framebufferDrawnHeight)
             parent.render()
             framebuffer.end()
             batch.begin()
@@ -144,10 +182,13 @@ abstract class SceneCanvas : Table(Main.skin), Disposable {
             batch.color = Color.WHITE
 
             val fbTexture = framebuffer.colorBufferTexture
-            batch.draw(fbTexture, this.x, this.y, this.width, this.height)
+            batch.draw(fbTexture, this.x, this.y, this.width, this.height, 0f, 0f, framebufferDrawnU, framebufferDrawnV)
+
+            batch.color = Color.WHITE
+            Main.font.draw(batch, "FPS: "+Gdx.graphics.framesPerSecond, this.x + 10f, this.y + 10f)
         }
 
-        override fun sizeChanged() {
+        override public fun sizeChanged() {
             super.sizeChanged()
             framebuffer?.dispose()
             framebuffer = null
@@ -156,5 +197,17 @@ abstract class SceneCanvas : Table(Main.skin), Disposable {
 
     override fun dispose() {
         canvas.framebuffer?.dispose()
+        screenMesh.dispose()
+    }
+
+    private enum class FBFactor(val factor:Float, val displayName:String) {
+        SUB8(1f/8f, "Subsample 8x"),
+        SUB4(1f/4f, "Subsample 4x"),
+        SUB2(1f/2f, "Subsample 2x"),
+        ONE(1f, "1:1"),
+        SUP2(2f, "Supersample 2x"),
+        SUP4(4f, "Supersample 4x");
+
+        override fun toString(): String = displayName
     }
 }

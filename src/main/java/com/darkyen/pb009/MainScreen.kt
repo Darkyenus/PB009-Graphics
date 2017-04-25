@@ -59,7 +59,7 @@ class MainScreen : ScreenAdapter() {
             setAlignment(Align.center)
         })
 
-        present("Line Rasterization", default = true) {
+        present("Line Rasterization") {
             LineRasterization()
         }
 
@@ -95,8 +95,8 @@ class MainScreen : ScreenAdapter() {
             setAlignment(Align.center)
         })
 
-        present("Material Laboratory") {
-            MaterialLaboratory()
+        present("Voxel Laboratory", default = true) {
+            VoxelLaboratory()
         }
     }
 

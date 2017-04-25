@@ -1,9 +1,11 @@
 package com.darkyen.pb009.presentations
 
 import com.badlogic.gdx.graphics.Color
+import com.badlogic.gdx.math.MathUtils
+import com.badlogic.gdx.math.Vector2
 import com.darkyen.pb009.PointDirection
 import com.darkyen.pb009.RasterizationCanvas
-import java.lang.Math.abs
+import java.lang.Math.*
 
 /**
  *
@@ -27,6 +29,8 @@ class LineRasterization : RasterizationCanvas<LineRasterization.Variant>(Variant
                     dda(x0, y0, x1, y1)
             Variant.Bresenham ->
                     bresenham(x0, y0, x1, y1)
+            Variant.TracerDDA ->
+                    tracerDDA(firstHandle.canvasX(), firstHandle.canvasY(), secondHandle.canvasX(), secondHandle.canvasY())
         }
     }
 
@@ -165,10 +169,87 @@ class LineRasterization : RasterizationCanvas<LineRasterization.Variant>(Variant
         }
     }
 
+    fun tracerDDA(xo:Float, yo:Float, xd:Float, yd:Float) {
+        line(0f, -100f, 0f, 100f, color = hsv(0f))
+        line(-100f, 0f, 100f, 0f, color = hsv(0f))
+        step()
+
+        fun d2c(currentPos:Float, ray:Float):Float {
+            if (ray >= 0f) {
+                // Ray is positive
+                return floor(currentPos + 1f) - currentPos
+            } else {
+                // Ray is negative
+                return currentPos - ceil(currentPos - 1f)
+            }
+        }
+
+        fun deltaToCross(pos:Vector2, ray:Vector2):Vector2 {
+            return Vector2(
+                    d2c(pos.x, ray.x),
+                    d2c(pos.y, ray.y)
+            )
+        }
+
+        fun toPixelPos(p:Float, ray:Float):Int {
+            val whole = floor(p)
+            if (MathUtils.isEqual(whole.toFloat(), p) && ray < 0f) {
+                return whole - 1
+            } else {
+                return whole
+            }
+        }
+
+        val position = Vector2(xo, yo)
+        val ray = Vector2(xd - xo, yd - yo).nor()
+        val absRay = Vector2(Math.abs(ray.x), Math.abs(ray.y))
+
+        var totalT = 0f
+
+        val remainingToCross = deltaToCross(position, ray)
+        var pixelX = toPixelPos(position.x, ray.x)
+        var pixelY = toPixelPos(position.y, ray.y)
+
+        val rayDirectionX:Int = signum(ray.x).toInt()
+        val rayDirectionY:Int = signum(ray.y).toInt()
+
+        for (i in 0..127) {
+            val tX = remainingToCross.x / absRay.x
+            val tY = remainingToCross.y / absRay.y
+            val t:Float
+
+            if (tX < tY) {
+                // Crossing X first
+                t = tX
+                pixelX += rayDirectionX
+                remainingToCross.x = 1f
+                remainingToCross.y -= t * absRay.y
+            } else {
+                // Crossing Y first
+                t = tY
+                pixelY += rayDirectionY
+                remainingToCross.x -= t * absRay.x
+                remainingToCross.y = 1f
+            }
+            totalT += t
+            //position.mulAdd(ray, t)
+
+            val u = if (ray.x > 0f) 1f - remainingToCross.x else remainingToCross.x
+            val v = if (ray.y > 0f) 1f - remainingToCross.y else remainingToCross.y
+
+            pixel(pixelX, pixelY, color = rgb(u,v,1f))
+            step()
+        }
+
+        line(xo, yo, xd, yd, color = hsv(0.2f))
+        step()
+    }
+
     enum class Variant {
         Bresenham,
         DDA,
-        Naive;
+        Naive,
+        TracerDDA;
 
         override fun toString(): String {
             return name.replace('_', ' ')

@@ -19,6 +19,12 @@ fun signum(n:Int):Int {
     return 0
 }
 
+fun signum(n:Float):Float {
+    if (n < 0f) return -1f
+    if (n > 0f) return 1f
+    return 0f
+}
+
 fun ceil(f:Float):Int {
     return Math.ceil(f.toDouble()).toInt()
 }

@@ -6,7 +6,9 @@ import com.badlogic.gdx.assets.loaders.resolvers.LocalFileHandleResolver
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration
 import com.badlogic.gdx.graphics.g2d.Batch
+import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.badlogic.gdx.graphics.profiling.GLErrorListener
 import com.badlogic.gdx.graphics.profiling.GLProfiler
 import com.badlogic.gdx.physics.box2d.Box2D
 import com.badlogic.gdx.scenes.scene2d.ui.Skin
@@ -21,6 +23,8 @@ object Main : Game() {
         private set
     lateinit var skin: Skin
         private set
+    lateinit var font: BitmapFont
+        private set
 
     override fun create() {
         batch = SpriteBatch()
@@ -28,8 +32,10 @@ object Main : Game() {
         assetManager.finishLoading()
 
         skin = assetManager.get<Skin>("UISkin.json")
+        font = skin.getFont("font-ui-small")
 
         GLProfiler.enable()
+        GLProfiler.listener = GLErrorListener.THROWING_LISTENER
         setScreen(MainScreen())
     }
 }
@@ -44,6 +50,7 @@ fun main(args: Array<String>) {
     c.setTitle("PB009")
     c.useVsync(true)
     c.setResizable(true)
+    c.setIdleFPS(30)
     c.setWindowedMode(800, 600)
     c.setWindowSizeLimits(200, 150, 40000, 30000)
 
