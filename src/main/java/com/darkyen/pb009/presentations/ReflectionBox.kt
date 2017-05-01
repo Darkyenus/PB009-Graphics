@@ -10,9 +10,9 @@ import com.darkyen.pb009.util.AutoReloadShaderProgram
 /**
  *
  */
-class VoxelLaboratory : ShaderCanvas(beginSubSampled = true) {
+class ReflectionBox : ShaderCanvas(beginSubSampled = false) {
 
-    val voxelShader = AutoReloadShaderProgram(Gdx.files.internal("voxel_vertex.glsl"), Gdx.files.internal("voxel_fragment.glsl")).apply {
+    val voxelShader = AutoReloadShaderProgram(Gdx.files.internal("voxel_vertex.glsl"), Gdx.files.internal("reflection_box_fragment.glsl")).apply {
         if (!isCompiled) {
             throw IllegalStateException("Shader did not compile: "+log)
         }
@@ -23,14 +23,12 @@ class VoxelLaboratory : ShaderCanvas(beginSubSampled = true) {
     val locCameraTarget = voxelShader.getUniformLocation("cameraTarget")
     val locTime = voxelShader.getUniformLocation("time")
     val locShadingLevel = voxelShader.getUniformLocation("shadingLevel")
-    val locShape = voxelShader.getUniformLocation("shape")
 
-    var cameraRotation = 45f
-    var cameraHeightAngle = -45f
-    var cameraDistance = 40f
+    var cameraRotation = 5f
+    var cameraHeightAngle = -5f
+    var cameraDistance = 190f
 
-    private val shadingLevel:() -> ShadingLevel = newSelectBox(*ShadingLevel.values(), initiallySelected = ShadingLevel.PhongLikeWithShadows.ordinal)
-    private val voxelShape:() -> VoxelShape = newSelectBox(*VoxelShape.values())
+    private val shadingLevel:() -> ShadingLevel = newSelectBox(*ShadingLevel.values(), initiallySelected = ShadingLevel.Ambient.ordinal)
 
     init {
         input.addProcessor(object : InputAdapter() {
@@ -60,7 +58,6 @@ class VoxelLaboratory : ShaderCanvas(beginSubSampled = true) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
 
         Gdx.gl.glDisable(GL20.GL_BLEND)
-        //Gdx.gl.glDepthMask(false)
         voxelShader.begin()
         Gdx.gl.glUniform2f(locScreenDimensions, screenWidth.toFloat(), screenHeight.toFloat())
         Gdx.gl.glUniform3f(locCameraOrigin,
@@ -71,25 +68,14 @@ class VoxelLaboratory : ShaderCanvas(beginSubSampled = true) {
         Gdx.gl.glUniform3f(locCameraTarget, 0f, 0f, 0f)
         Gdx.gl.glUniform1f(locTime, time)
         Gdx.gl.glUniform1i(locShadingLevel, shadingLevel().ordinal)
-        Gdx.gl.glUniform1i(locShape, voxelShape().ordinal)
 
         screenMesh.render(voxelShader, GL20.GL_TRIANGLE_FAN, 0, 4)
         voxelShader.end()
-        //Gdx.gl.glDepthMask(true)
     }
 
     private enum class ShadingLevel {
-        Solid,
-        PhongLike,
-        PhongLikeWithShadows
-    }
-
-    private enum class VoxelShape {
-        Spheres,
-        Cubes,
-        Torus,
-        Plane,
-        SkewedPlane,
-        Cylinder
+        Ambient,
+        Ambient_Diffuse,
+        Ambient_Diffuse_Specular
     }
 }

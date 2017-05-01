@@ -13,7 +13,7 @@ crossPaths := false
 
 autoScalaLibrary := false
 
-kotlinVersion := "1.1.1"
+kotlinVersion := "1.1.2"
 
 kotlinLib("stdlib")
 

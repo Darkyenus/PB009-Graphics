@@ -95,8 +95,12 @@ class MainScreen : ScreenAdapter() {
             setAlignment(Align.center)
         })
 
-        present("Voxel Laboratory", default = true) {
+        present("Voxel Laboratory") {
             VoxelLaboratory()
+        }
+
+        present("Reflection Box", default = true) {
+            ReflectionBox()
         }
     }
 

@@ -1,6 +1,6 @@
 (UTF-8)
 
-PB009 Introduction to Computer Graphics - Homework 2
+PB009 Introduction to Computer Graphics - Homework Bonus
 ====================================================
 
 Návod ke spuštění:
@@ -12,8 +12,12 @@ Návod ke spuštění:
 
 O programu:
 -----------
+Vykresluje scénu dle zadání bonusového úkolu. Ovládání je stejné jako pro úkol 2 (viz níže,
+všechny předchozí úkoly jsou dostupné skrz levé menu).
+
+Úkol 2:
 Vykresluje 3D objekty z voxelů. V dolním panelu je možné zvolit úroveň sub/super-samplingu (sub- pro pomalejší počítače,
-super pro lépe vypadající obraz), úroveň shadingu (jednoduché, Phongovo a Phongovo se stíny) a 3D útvar.
+super- pro lépe vypadající obraz), úroveň shadingu (jednoduché, Phongovo a Phongovo se stíny) a 3D útvar.
 Vykresleným útvarem je možné otáčet myší a přibližovat oddalovat kolečkem myši.
 
 Útvar je vykreslovaný přes ray-trace shader, který pro každý pixel vytvoří paprsek od pozorovatele do scény
@@ -37,5 +41,7 @@ Barvy obrazců jsou voleny tak, aby co lejlépe přibližovaly vnitřní stav a 
 
 
 Naprogramováno v jazyku Kotlin (https://kotlinlang.org), využívá libGDX (https://libgdx.badlogicgames.com).
-Některé části převzaté či inspirované z https://www.shadertoy.com/view/Xds3zN pod MIT License (voxel_fragment.glsl).
+Některé části převzaté či inspirované z https://www.shadertoy.com/view/Xds3zN pod MIT License (voxel_fragment.glsl, reflection_box_fragment.glsl).
+reflection_box_fragment.glsl obsahuje kód pro generaci šumu z https://github.com/ashima/webgl-noise/blob/master/src/noise2D.glsl pod MIT License.
+
 Jan Polák (c) 2017

@@ -20,7 +20,7 @@ import org.lwjgl.system.MathUtil
  *
  */
 @Suppress("LeakingThis")
-abstract class ShaderCanvas : Table(Main.skin), Disposable {
+abstract class ShaderCanvas(beginSubSampled:Boolean) : Table(Main.skin), Disposable {
 
     private val canvas = FrameBufferCanvas(this)
     private val optionsTable = Table(Main.skin)
@@ -60,7 +60,7 @@ abstract class ShaderCanvas : Table(Main.skin), Disposable {
 
         add(optionsTable).growX().row()
 
-        newSelectBox(*FBFactor.values(), initiallySelected = FBFactor.SUB2.ordinal) {newFactor ->
+        newSelectBox(*FBFactor.values(), initiallySelected = if (beginSubSampled) FBFactor.SUB2.ordinal else FBFactor.ONE.ordinal) { newFactor ->
             factor = newFactor.factor
             canvas.sizeChanged()
         }
