@@ -59,7 +59,7 @@ class MainScreen : ScreenAdapter() {
             setAlignment(Align.center)
         })
 
-        present("Line Rasterization") {
+        present("Line Rasterization", default = true) {
             LineRasterization()
         }
 
@@ -99,7 +99,7 @@ class MainScreen : ScreenAdapter() {
             VoxelLaboratory()
         }
 
-        present("Reflection Box", default = true) {
+        present("Reflection Box") {
             ReflectionBox()
         }
     }
