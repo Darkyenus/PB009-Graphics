@@ -13,6 +13,9 @@ import com.badlogic.gdx.graphics.profiling.GLProfiler
 import com.badlogic.gdx.physics.box2d.Box2D
 import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.badlogic.gdx.utils.ObjectMap
+import java.io.File
+import java.lang.management.ManagementFactory
+
 
 /**
  *
@@ -64,5 +67,37 @@ fun main(args: Array<String>) {
         }
     }
 
-    Lwjgl3Application(Main, c)
+    try {
+        Lwjgl3Application(Main, c)
+    } catch (e:ExceptionInInitializerError) {
+        if (e.cause is IllegalStateException && (e.cause!!.message ?: "").contains("-XstartOnFirstThread")) {
+            // Restart on main thread
+
+            if (ARGS.containsKey("firstThreadRestarted")) {
+                System.err.println("Failure to restart")
+                throw e
+            } else {
+                restartOnFirstThread(args)
+            }
+        } else {
+            throw e
+        }
+    }
+}
+
+private fun restartOnFirstThread(args: Array<String>) {
+    val command = ArrayList<String>()
+    command.add(System.getProperty("java.home") + File.separator + "bin" + File.separator + "java")
+    command.addAll(ManagementFactory.getRuntimeMXBean().inputArguments)
+    command.add("-XstartOnFirstThread")
+    command.add("-cp")
+    command.add(ManagementFactory.getRuntimeMXBean().classPath)
+    command.add("com.darkyen.pb009.MainKt")
+    command.addAll(args)
+    command.add("firstThreadRestarted")
+
+    println("Restarting: "+command)
+    val process = ProcessBuilder().command(command).directory(File(".")).inheritIO().start()
+    process.waitFor()
+    System.exit(process.exitValue())
 }
