@@ -1,6 +1,6 @@
 (UTF-8)
 
-PB009 Introduction to Computer Graphics - Homework Bonus
+PB009 Introduction to Computer Graphics - Homework
 ====================================================
 
 Návod ke spuštění:
